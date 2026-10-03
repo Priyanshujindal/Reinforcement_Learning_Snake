@@ -79,8 +79,6 @@ class SnakeGame:
 
         self.spawn_food()
 
-        return self.get_state()
-
 
     # ==========================================
     # Spawn food
@@ -123,131 +121,15 @@ class SnakeGame:
 
         self.direction = new_direction
 
-    
-    def get_state(self):
-        head_x,head_y=self.snake[0]
-
-        direction_x,direction_y=self.direction
-
-        # Directions relative to the current direction
-        left_direction=(direction_y,-direction_x)
-        right_direction=(-direction_y,direction_x)
-
-        # Positions directly in front, to the left,and to the right
-        straight_position=(
-            head_x+direction_x,
-            head_y+direction_y
-        )
-
-        left_position=(
-            head_x+left_direction[0],
-            head_y+left_direction[1]
-        )
-
-        right_position=(
-            head_x+right_direction[0],
-            head_y+right_direction[1]
-        )
-
-        # check whether a position is dangerous
-        def is_danger(position):
-            x,y=position
-
-            # Wall collision
-            if x<0 or x>=GRID_WIDTH or y<0 or y>=GRID_HEIGHT:
-                return 1
-
-            # Snake body collision
-            if position in self.snake[1:]:
-                return 1
-
-            return 0
-        
-        danger_straight=is_danger(straight_position)
-        danger_left=is_danger(left_position)
-        danger_right=is_danger(right_position)
-
-        #Current direction
-        moving_left=direction_x==-1
-        moving_right=direction_x==1
-        moving_up=direction_y==-1
-        moving_down=direction_y==1
-
-        # Food position relative to the head
-        food_left=self.food[0]<head_x
-        food_right=self.food[0]>head_x
-        food_up=self.food[1]<head_y
-        food_down=self.food[1]>head_y
-
-        state=[
-            danger_straight,
-            danger_left,
-            danger_right,
-
-            moving_left,
-            moving_right,
-            moving_up,
-            moving_down,
-
-            food_left,
-            food_right,
-            food_up,
-            food_down
-        ]
-
-        return state
-
-    def step(self, action):
-        # Convert action into direction
-
-        direction_x, direction_y = self.direction
-
-        if action == 0:
-            # Turn left
-            self.direction = (direction_y, -direction_x)
-
-        elif action == 1:
-            # Go straight
-            pass
-
-        elif action == 2:
-            # Turn right
-            self.direction = (-direction_y, direction_x)
-
-        else:
-            raise ValueError("Invalid action")
-
-        # Move the snake
-        ate_food = self.move()
-
-        # Check collision
-        if self.check_collision():
-            reward = -10
-            done = True
-            next_state = self.get_state()
-
-            return next_state, reward, done
-
-        # Reward for eating food
-        if ate_food:
-            reward = 10
-        else:
-            reward = 0
-
-        done = False
-
-        # Get new state
-        next_state = self.get_state()
-
-        return next_state, reward, done
 
     # ==========================================
     # Move
     # ==========================================
 
     def move(self):
+
         head_x, head_y = self.snake[0]
-        
+
         direction_x, direction_y = self.direction
 
         new_head = (
@@ -255,17 +137,24 @@ class SnakeGame:
             head_y + direction_y
         )
 
+        # Add new head
+
         self.snake.insert(0, new_head)
 
-        ate_food = new_head == self.food
+        # Eat food
 
-        if ate_food:
+        if new_head == self.food:
+
             self.score += 1
+
             self.spawn_food()
+
         else:
+
+            # Remove tail
+
             self.snake.pop()
 
-        return ate_food
 
     # ==========================================
     # Collision
@@ -546,25 +435,5 @@ class SnakeGame:
 if __name__ == "__main__":
 
     game = SnakeGame()
-    state=game.reset()
-    print("Initial state",state)
 
-    while True:
-        for event in pygame.event.get():
-            if event.type==pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type==pygame.KEYDOWN:
-                if event.key==pygame.K_r and game.game_over:
-                    game.reset()
-        if not game.game_over:
-            action=random.randint(0,2)
-            next_state,reward,done=game.step(action)
-            
-            if done:
-                game.game_over=True
-        game.draw()
-
-        game.clock.tick(FPS)
-            
-            
+    game.run()
