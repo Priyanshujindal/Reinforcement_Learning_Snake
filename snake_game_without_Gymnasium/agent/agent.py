@@ -1,11 +1,25 @@
-from matplotlib import path
+import os
+import sys
 import random
 import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from .dqn import DQN
-from .replay_buffer import ReplayBuffer
+# Add package root to Python path
+ROOT_DIR = os.path.dirname(
+    os.path.dirname(
+        os.path.abspath(__file__)
+    )
+)
+if ROOT_DIR not in sys.path:
+    sys.path.append(ROOT_DIR)
+
+try:
+    from .dqn import DQN
+    from .replay_buffer import ReplayBuffer
+except (ImportError, ValueError):
+    from dqn import DQN  # type: ignore
+    from replay_buffer import ReplayBuffer  # type: ignore
 
 
 class DQNAgent:

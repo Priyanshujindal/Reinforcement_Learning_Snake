@@ -3,13 +3,12 @@ import os
 import torch
 
 # Add project root to Python path
-sys.path.append(
+ROOT_DIR = os.path.dirname(
     os.path.dirname(
-        os.path.dirname(
-            os.path.abspath(__file__)
-        )
+        os.path.abspath(__file__)
     )
 )
+sys.path.append(ROOT_DIR)
 
 import matplotlib.pyplot as plt
 
@@ -30,8 +29,9 @@ def train():
     # File paths
     # -----------------------------------------
 
-    checkpoint_path = "models/snake_checkpoint.pth"
-    model_path = "models/snake_dqn.pth"
+    models_dir = os.path.join(ROOT_DIR, "models")
+    checkpoint_path = os.path.join(models_dir, "snake_checkpoint.pth")
+    model_path = os.path.join(models_dir, "snake_dqn.pth")
 
     # -----------------------------------------
     # Default training state
@@ -216,7 +216,7 @@ def train():
     # Save COMPLETE checkpoint
     # =========================================
 
-    os.makedirs("models", exist_ok=True)
+    os.makedirs(models_dir, exist_ok=True)
 
     agent.save_checkpoint(
         checkpoint_path,

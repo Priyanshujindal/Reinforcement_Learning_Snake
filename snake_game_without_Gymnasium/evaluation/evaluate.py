@@ -4,13 +4,12 @@ import torch
 import pygame
 
 # Add project root to Python path
-sys.path.append(
+ROOT_DIR = os.path.dirname(
     os.path.dirname(
-        os.path.dirname(
-            os.path.abspath(__file__)
-        )
+        os.path.abspath(__file__)
     )
 )
+sys.path.append(ROOT_DIR)
 
 from game.snake import SnakeGame
 from agent.agent import DQNAgent
@@ -20,7 +19,7 @@ from agent.agent import DQNAgent
 # Settings
 # =========================================
 
-MODEL_PATH = "models/snake_dqn.pth"
+MODEL_PATH = os.path.join(ROOT_DIR, "models", "snake_dqn.pth")
 
 # False = fast evaluation without visualization
 # True  = watch the Snake play
