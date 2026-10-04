@@ -230,7 +230,7 @@ class DQNAgent:
 
         self.epsilon_steps += 1
 
-        if self.epsilon_steps % 3_000 == 0:
+        if self.epsilon_steps % 2_000 == 0:
 
             if self.epsilon > self.epsilon_min:
 
